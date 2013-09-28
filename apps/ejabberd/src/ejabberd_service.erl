@@ -75,11 +75,11 @@
 -endif.
 
 -define(STREAM_HEADER,
-	"<?xml version='1.0'?>"
+	<<"<?xml version='1.0'?>"
 	"<stream:stream "
 	"xmlns:stream='http://etherx.jabber.org/streams' "
 	"xmlns='jabber:component:accept' "
-	"id='~s' from='~s'>"
+	"id='~s' from='~s'>">>
        ).
 
 -define(STREAM_TRAILER, <<"</stream:stream>">>).
@@ -220,7 +220,7 @@ wait_for_handshake({xmlstreamelement, El}, StateData) ->
 	    case list_to_binary(sha:sha(StateData#state.streamid ++
                                             StateData#state.password)) of
 		Digest ->
-		    send_text(StateData, "<handshake/>"),
+		    send_text(StateData, <<"<handshake/>">>),
 		    lists:foreach(
 		      fun(H) ->
 			      ejabberd_router:register_route(H),
@@ -397,7 +397,7 @@ print_state(State) ->
 %%% Internal functions
 %%%----------------------------------------------------------------------
 
-send_text(StateData, Text) ->
+send_text(StateData, Text) when is_binary(Text) ->
     ?DEBUG("Send XML on stream: ~s", [Text]),
     (StateData#state.sockmod):send(StateData#state.socket, Text).
 
