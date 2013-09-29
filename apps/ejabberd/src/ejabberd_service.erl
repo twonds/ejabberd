@@ -397,7 +397,7 @@ print_state(State) ->
 %%% Internal functions
 %%%----------------------------------------------------------------------
 
-send_text(StateData, Text) when is_binary(Text) ->
+send_text(StateData, Text) ->
     ?DEBUG("Send XML on stream: ~s", [Text]),
     (StateData#state.sockmod):send(StateData#state.socket, Text).
 
