@@ -397,7 +397,8 @@ handle_stream_event({EventTag, Body, Rid} = Event, Handler,
                    [{EventTag, Body}]),
             NS#state{deferred = [Event | NS#state.deferred]};
         {_, _, false, false} ->
-            ?ERROR_MSG("invalid rid ~p:~n~p~n", [Rid, {EventTag, Body}]),
+            ?ERROR_MSG("invalid rid ~p, expected ~p:~n~p~n",
+                       [Rid, OldRid + 1, {EventTag, Body}]),
             [Pid ! item_not_found
              || {_, _, Pid} <- lists:sort(NS#state.handlers)],
             throw({invalid_rid, NS#state{handlers = []}})
@@ -605,7 +606,7 @@ maybe_report(#state{report = Report} = S) ->
     {NewAttrs, S#state{report = false}}.
 
 cache_response({Rid,_,_} = Response, #state{sent = Sent} = S) ->
-    NewSent = elists:insert(Response, Sent),
+    NewSent = lists:keymerge(1, [Response], Sent),
     CacheUpTo = case S#state.client_acks of
         true ->
             %% Acknowledgements are on - there's no limit on the number

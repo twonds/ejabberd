@@ -45,10 +45,12 @@ start(normal, _Args) ->
     db_init(),
     sha:start(),
     xml:start(),
+    application:start(p1_cache_tab),
 
     load_drivers([tls_drv, expat_erl]),
     translate:start(),
     acl:start(),
+    ejabberd_node_id:start(),
     ejabberd_ctl:init(),
     ejabberd_commands:init(),
     gen_mod:start(),
@@ -230,6 +232,8 @@ load_drivers([]) ->
 load_drivers([Driver | Rest]) ->
     case erl_ddll:load_driver(ejabberd:get_so_path(), Driver) of
         ok ->
+            load_drivers(Rest);
+        {error, permanent} ->
             load_drivers(Rest);
         {error, already_loaded} ->
             load_drivers(Rest);

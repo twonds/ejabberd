@@ -1,11 +1,12 @@
-esl-ejabberd
+MongooseIM  [![](http://opensource.erlang-solutions.com/mongooseim/icon.png "Build status")](http://opensource.erlang-solutions.com/mongooseim/ct_report/all_runs.html)
 ============
-esl-ejabberd is Erlang Solutions' robust and efficient XMPP server aimed
-at large installations. It utilizes Erlang/OTP's hallmark features - fault
-tolerance and suitability for server software working in highly demanding
-conditions.
+MongooseIM (previously esl-ejabberd) is Erlang Solutions' robust and efficient XMPP
+server aimed at large installations. Specifically designed for enterprise purposes,
+it is fault-tolerant, can utilize resources of multiple clustered machines
+and easily scale in need of more capacity (by just adding a box/VM).
+It provides support for WebSockets and reimplemented BOSH.
 
-Its home at GitHub is http://github.com/esl/ejabberd.
+Its home at GitHub is http://github.com/esl/MongooseIM.
 
 
 Quickstart guide
@@ -38,7 +39,7 @@ How to build
 ------------
 1.  Requirements.
 
-    To compile ejabberd you need:
+    To compile MongooseIM you need:
     *   GNU Make,
     *   GCC,
     *   Libexpat 1.95 or higher,
@@ -50,7 +51,7 @@ How to build
 
 2.  Compiling on UNIX-like systems.
 
-    To compile ejabberd, go to the main repo directory `$REPO` and execute
+    To compile MongooseIM, go to the main repo directory `$REPO` and execute
     the command (`$` stands for the shell prompt):
 
         $ make
@@ -60,7 +61,7 @@ How to build
         $ ./rebar get-deps
         $ ./rebar compile
 
-    To generate ejabberd release:
+    To generate MongooseIM release:
 
         $ make rel
 
@@ -69,37 +70,37 @@ How to build
         $ ./rebar generate
 
     These commands will generate a self-contained OTP system image in the
-    project's `rel/ejabberd` subdirectory. The contents of that directory are as
+    project's `rel/mongooseim` subdirectory. The contents of that directory are as
     follows:
-    *   `rel/ejabberd/bin` - startup/administration scripts,
-    *   `rel/ejabberd/etc` - configuration files,
-    *   `rel/ejabberd/lib` - ejabberd binary, header and runtime files,
-    *   `rel/ejabberd/var` - spool directory,
-    *   `rel/ejabberd/log` - log file directory,
-    *   `rel/ejabberd/releases` - release files directory.
+    *   `rel/mongooseim/bin` - startup/administration scripts,
+    *   `rel/mongooseim/etc` - configuration files,
+    *   `rel/mongooseim/lib` - MongooseIM binary, header and runtime files,
+    *   `rel/mongooseim/var` - spool directory,
+    *   `rel/mongooseim/log` - log file directory,
+    *   `rel/mongooseim/releases` - release files directory.
 
-3.  Running esl-ejabberd.
+3.  Running MongooseIM.
 
-    To run ejabberd from the project tree after compiling it, change
-    to `$REPO/rel/ejabberd`.
+    To run MongooseIM from the project tree after compiling it, change
+    to `$REPO/rel/mongooseim`.
 
-    There you can use the `ejabberd` command line administration script to
-    start and stop ejabberd. For example:
+    There you can use the `mongooseim` command line administration script to
+    start and stop MongooseIM. For example:
 
-        $ bin/ejabberd start
+        $ bin/mongooseim start
 
     will start the server.
 
     You can also run the server in interactive mode:
 
-        $ bin/ejabberd live
+        $ bin/mongooseim live
 
-    There's also a tool called `ejabberdctl` allowing you to perform some
+    There's also a tool called `mongooseimctl` allowing you to perform some
     operations on a running instance, e.g.:
 
-        $ bin/ejabberdctl status
-        The node ejabberd@localhost is started with status: started
-        ejabberd 2.1.8 is running in that node
+        $ bin/mongooseimctl status
+        The node mongooseim@localhost is started with status: started
+        MongooseIM version 1.3.1 is running on that node
 
 4.  Building the testing target and running tests.
 
@@ -119,18 +120,20 @@ How to build
     be generated in `$REPO/test/ct_report/cover.html`.
 
 
-esl-ejabberd documentation notice
+MongooseIM documentation notice
 ---------------------------------
-esl-ejabberd, being a fork of ejabberd, is currently in a phase
+MongooseIM, being a fork of ejabberd, is currently in a phase
 of rapid development. Because of that the documentation found in the `doc/`
 subdirectory of the source tree, while mostly relevant, may be inaccurate.
 
 The main reason is that some rarely useful features were removed from
 the repository or are still waiting to be brought up to the Erlang Solutions standards.
 
+Don't forget to check out our [wiki](https://github.com/esl/MongooseIM/wiki) - hopefully, its scope will grow with time.
+
 
 Want to get in touch with us?
 -----------------------------
 In case of any suggestions, questions or any random thoughts on this project,
 please feel free to contact us by the standard GitHub ways or at
-<a href='mailto:ejabberd@erlang-solutions.com'>ejabberd@erlang-solutions.com</a>.
+<a href='mailto:mongoose-im@erlang-solutions.com'>mongoose-im@erlang-solutions.com</a>.
