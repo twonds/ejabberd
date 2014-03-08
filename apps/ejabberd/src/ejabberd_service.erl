@@ -65,62 +65,30 @@
 -define(FSMOPTS, []).
 -endif.
 
-<<<<<<< HEAD
-%% Module start with or without supervisor:
--ifdef(NO_TRANSIENT_SUPERVISORS).
--define(SUPERVISOR_START, ?GEN_FSM:start(ejabberd_service, [SockData, Opts],
-					 fsm_limit_opts(Opts) ++ ?FSMOPTS)).
--else.
--define(SUPERVISOR_START, supervisor:start_child(ejabberd_service_sup,
-						 [SockData, Opts])).
--endif.
-
--define(STREAM_HEADER,
-	"<?xml version='1.0'?>"
-	"<stream:stream "
-	"xmlns:stream='http://etherx.jabber.org/streams' "
-	"xmlns='jabber:component:accept' "
-	"id='~s' from='~s'>"
-=======
 -define(STREAM_HEADER,
 	<<"<?xml version='1.0'?>"
 	"<stream:stream "
 	"xmlns:stream='http://etherx.jabber.org/streams' "
 	"xmlns='jabber:component:accept' "
 	"id='~s' from='~s'>">>
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
        ).
 
 -define(STREAM_TRAILER, <<"</stream:stream>">>).
 
 -define(INVALID_HEADER_ERR,
 	<<"<stream:stream "
-<<<<<<< HEAD
-          "xmlns:stream='http://etherx.jabber.org/streams'>"
-          "<stream:error>Invalid Stream Header</stream:error>"
-          "</stream:stream>">>
-=======
 	"xmlns:stream='http://etherx.jabber.org/streams'>"
 	"<stream:error>Invalid Stream Header</stream:error>"
 	"</stream:stream>">>
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
        ).
 
 -define(INVALID_HANDSHAKE_ERR,
 	<<"<stream:error>"
-<<<<<<< HEAD
-          "<not-authorized xmlns='urn:ietf:params:xml:ns:xmpp-streams'/>"
-          "<text xmlns='urn:ietf:params:xml:ns:xmpp-streams' xml:lang='en'>"
-          "Invalid Handshake</text>"
-          "</stream:error>"
-          "</stream:stream>">>
-=======
 	"<not-authorized xmlns='urn:ietf:params:xml:ns:xmpp-streams'/>"
 	"<text xmlns='urn:ietf:params:xml:ns:xmpp-streams' xml:lang='en'>"
 	"Invalid Handshake</text>"
 	"</stream:error>"
 	"</stream:stream>">>
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
        ).
 
 -define(INVALID_XML_ERR,
@@ -132,11 +100,7 @@
 %%% API
 %%%----------------------------------------------------------------------
 start(SockData, Opts) ->
-<<<<<<< HEAD
-    ?SUPERVISOR_START.
-=======
     supervisor:start_child(ejabberd_service_sup, [SockData, Opts]).
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
 
 start_link(SockData, Opts) ->
     ?GEN_FSM:start_link(ejabberd_service, [SockData, Opts],
@@ -199,11 +163,7 @@ init([{SockMod, Socket}, Opts]) ->
     {ok, wait_for_stream, #state{socket = Socket,
 				 sockmod = SockMod,
 				 streamid = new_id(),
-<<<<<<< HEAD
-				 hosts = [list_to_binary(Host) || Host <- Hosts],
-=======
 				 hosts = [iolist_to_binary(H) || H <- Hosts],
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
 				 password = Password,
 				 access = Access,
 				 check_from = CheckFrom
@@ -235,15 +195,9 @@ wait_for_stream({xmlstreamstart, _Name, Attrs}, StateData) ->
 
 wait_for_stream({xmlstreamerror, _}, StateData) ->
     Header = io_lib:format(?STREAM_HEADER,
-<<<<<<< HEAD
-			   ["none", ?MYNAME]),
-    send_text(StateData,
-	      [Header, ?INVALID_XML_ERR, ?STREAM_TRAILER]),
-=======
 			   [<<"none">>, ?MYNAME]),
     send_text(StateData,<<(iolist_to_binary(Header))/binary,
                            (?INVALID_XML_ERR)/binary,(?STREAM_TRAILER)/binary>>),
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
     {stop, normal, StateData};
 
 wait_for_stream(closed, StateData) ->
@@ -255,15 +209,9 @@ wait_for_handshake({xmlstreamelement, El}, StateData) ->
     case {Name, xml:get_cdata(Els)} of
 	{<<"handshake">>, Digest} ->
 	    case list_to_binary(sha:sha(StateData#state.streamid ++
-<<<<<<< HEAD
-                                            StateData#state.password)) of
-		Digest ->
-		    send_text(StateData, "<handshake/>"),
-=======
 			 StateData#state.password)) of
 		Digest ->
 		    send_text(StateData, <<"<handshake/>">>),
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
 		    lists:foreach(
 		      fun(H) ->
 			      ejabberd_router:register_route(H),
@@ -271,11 +219,7 @@ wait_for_handshake({xmlstreamelement, El}, StateData) ->
 		      end, StateData#state.hosts),
 		    {next_state, stream_established, StateData};
 		_ ->
-<<<<<<< HEAD
-                    send_text(StateData, ?INVALID_HANDSHAKE_ERR),
-=======
 		    send_text(StateData, ?INVALID_HANDSHAKE_ERR),
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
 		    {stop, normal, StateData}
 	    end;
 	_ ->
@@ -286,11 +230,7 @@ wait_for_handshake({xmlstreamend, _Name}, StateData) ->
     {stop, normal, StateData};
 
 wait_for_handshake({xmlstreamerror, _}, StateData) ->
-<<<<<<< HEAD
-    send_text(StateData, [?INVALID_XML_ERR, ?STREAM_TRAILER]),
-=======
     send_text(StateData,<<(?INVALID_XML_ERR)/binary,(?STREAM_TRAILER)/binary>>),
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
     {stop, normal, StateData};
 
 wait_for_handshake(closed, StateData) ->
@@ -306,12 +246,7 @@ stream_established({xmlstreamelement, El}, StateData) ->
 		  %% when accept packets from any address.
 		  %% In this case, the component can send packet of
 		  %% behalf of the server users.
-<<<<<<< HEAD
-		  false ->
-                      jlib:binary_to_jid(From);
-=======
 		  false -> jlib:binary_to_jid(From);
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
 		  %% The default is the standard behaviour in XEP-0114
 		  _ ->
 		      FromJID1 = jlib:binary_to_jid(From),
@@ -321,12 +256,7 @@ stream_established({xmlstreamelement, El}, StateData) ->
 				  true -> FromJID1;
 				  false -> error
 			      end;
-<<<<<<< HEAD
-			  _ ->
-                              error
-=======
 			  _ -> error
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
 		      end
 	      end,
     To = xml:get_attr_s(<<"to">>, Attrs),
@@ -340,10 +270,7 @@ stream_established({xmlstreamelement, El}, StateData) ->
        (ToJID /= error) and (FromJID /= error) ->
 	    ejabberd_router:route(FromJID, ToJID, NewEl);
        true ->
-<<<<<<< HEAD
-=======
             ?INFO_MSG("Not valid Name (~p) or error in FromJID (~p) or ToJID (~p)~n", [Name, FromJID, ToJID]),
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
 	    Err = jlib:make_error_reply(NewEl, ?ERR_BAD_REQUEST),
 	    send_element(StateData, Err),
 	    error
@@ -351,17 +278,6 @@ stream_established({xmlstreamelement, El}, StateData) ->
     {next_state, stream_established, StateData};
 
 stream_established({xmlstreamend, _Name}, StateData) ->
-<<<<<<< HEAD
-    % TODO
-    {stop, normal, StateData};
-
-stream_established({xmlstreamerror, _}, StateData) ->
-    send_text(StateData, [?INVALID_XML_ERR, ?STREAM_TRAILER]),
-    {stop, normal, StateData};
-
-stream_established(closed, StateData) ->
-    % TODO
-=======
     % TODO ??
     {stop, normal, StateData};
 
@@ -371,7 +287,6 @@ stream_established({xmlstreamerror, _}, StateData) ->
 
 stream_established(closed, StateData) ->
     % TODO ??
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
     {stop, normal, StateData}.
 
 
@@ -429,15 +344,11 @@ handle_info({send_element, El}, StateName, StateData) ->
 handle_info({route, From, To, Packet}, StateName, StateData) ->
     case acl:match_rule(global, StateData#state.access, From) of
 	allow ->
-<<<<<<< HEAD
-	    Text = xml:element_to_binary(jlib:replace_from_to(From, To, Packet)),
-=======
            #xmlel{name =Name, attrs = Attrs,children = Els} = Packet,
 	    Attrs2 = jlib:replace_from_to_attrs(jlib:jid_to_binary(From),
 						jlib:jid_to_binary(To),
 						Attrs),
 	    Text = xml:element_to_binary( #xmlel{name = Name, attrs = Attrs2,children = Els}),
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
 	    send_text(StateData, Text);
 	deny ->
 	    Err = jlib:make_error_reply(Packet, ?ERR_NOT_ALLOWED),
@@ -481,10 +392,6 @@ print_state(State) ->
 %%%----------------------------------------------------------------------
 
 send_text(StateData, Text) ->
-<<<<<<< HEAD
-    ?DEBUG("Send XML on stream: ~s", [Text]),
-=======
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
     (StateData#state.sockmod):send(StateData#state.socket, Text).
 
 send_element(StateData, El) ->
@@ -505,7 +412,4 @@ fsm_limit_opts(Opts) ->
 		    []
 	    end
     end.
-<<<<<<< HEAD
-=======
 
->>>>>>> a05d423e8fccdb5c2226efe5d7c034bd18d2329f
