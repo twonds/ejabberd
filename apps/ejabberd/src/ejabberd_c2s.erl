@@ -1575,7 +1575,7 @@ terminate(_Reason, StateName, StateData) ->
 		    ?INFO_MSG("(~w) Stream ~p resumed for ~s",
 			      [StateData#state.socket,
 			       StateData#state.stream_mgmt_id,
-			       jlib:jid_to_string(StateData#state.jid)]);
+			       jlib:jid_to_binary(StateData#state.jid)]);
 		_ ->
 		    ?INFO_MSG("(~w) Close session for ~s",
 			      [StateData#state.socket,
@@ -1618,7 +1618,7 @@ terminate(_Reason, StateName, StateData) ->
 	    ?INFO_MSG("(~w) Stream ~p resumed for ~s",
 	              [StateData#state.socket,
 		       StateData#state.stream_mgmt_id,
-	               jlib:jid_to_string(StateData#state.jid)]);
+	               jlib:jid_to_binary(StateData#state.jid)]);
 	_ ->
 	    ok
     end,
